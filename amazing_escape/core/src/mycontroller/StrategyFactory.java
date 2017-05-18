@@ -4,6 +4,7 @@ public class StrategyFactory {
 	private static StrategyFactory instance;
 	TurningStrategyAdapter turningStrategyAdapter;
 	DetectStrategyAdapter detectStrategyAdapter;
+	AvoidingStrategyAdapter avoidingStrategyAdapter;
 	
 	public static StrategyFactory getInstance(){
 		if(instance == null)
@@ -43,5 +44,22 @@ public class StrategyFactory {
 				e.printStackTrace();
 			}
 		return detectStrategyAdapter;
+	}
+	
+	public AvoidingStrategyAdapter getAvoidingStrategyAdapter(String className){
+		//if(detectStrategyAdapter == null)
+			try {
+				avoidingStrategyAdapter = (AvoidingStrategyAdapter) Class.forName(className).newInstance();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return avoidingStrategyAdapter;
 	}
 }

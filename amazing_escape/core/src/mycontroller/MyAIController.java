@@ -20,8 +20,9 @@ public class MyAIController extends CarController {
 	//keep track of the opposite direction of the last time the car was following the wall
 	WorldSpatial.Direction preFollowWallOpsiteDir = null;   
 	boolean strategyLock = false; 
-	String previousStrategy;                                                      
-	
+	TurningStrategyAdapter turningStrategy; 
+	                                                      
+	 
 	// Car Speed to move at
 	final float CAR_SPEED = 3;
 	
@@ -36,9 +37,18 @@ public class MyAIController extends CarController {
 	public void update(float delta) {
 		System.out.println("Current: "+getPosition());
 		System.out.println(getAngle());
-		System.out.println(getOrientation());
+		//System.out.println(getOrientation());
 		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.predictDetectingAdapter").detect(this, delta);
-		StrategyFactory.getInstance().getTurningStrategyAdapter(strategy).applyTurning(this,delta);
+		try{
+			StrategyFactory.getInstance().getAvoidingStrategyAdapter(strategy).avoid(this, delta);;
+		}catch(Exception e){
+			if(!strategyLock){
+				turningStrategy = StrategyFactory.getInstance().getTurningStrategyAdapter(strategy);
+				turningStrategy.applyTurning(this, delta);
+			}else{
+				turningStrategy.applyTurning(this, delta);
+			}
+		}
 	}
 	
 	/**
@@ -50,30 +60,30 @@ public class MyAIController extends CarController {
 		if(lastTurnDirection != null && !isTurningLeft && !isTurningRight){
 			switch(orientation){
 			case EAST:
-				if(getAngle() > 0 && getAngle()<90){
+				if(getAngle() > WorldSpatial.EAST_DEGREE_MIN && getAngle()<WorldSpatial.NORTH_DEGREE){
 					turnRight(delta);
-				}else if(getAngle() < 360 && getAngle()>270){
+				}else if(getAngle() < WorldSpatial.EAST_DEGREE_MAX && getAngle() > WorldSpatial.SOUTH_DEGREE){
 					turnLeft(delta);
 				}
 				break;
 			case NORTH:
-				if(getAngle() > 90){
+				if(getAngle() > WorldSpatial.NORTH_DEGREE){
 					turnRight(delta);
-				}else if(getAngle()<90){
+				}else if(getAngle()<WorldSpatial.NORTH_DEGREE){
 					turnLeft(delta);
 				}
 				break;
 			case SOUTH:
-				if(getAngle()>270){
+				if(getAngle()>WorldSpatial.SOUTH_DEGREE){
 					turnRight(delta);
-				}else if(getAngle()<270){
+				}else if(getAngle()<WorldSpatial.SOUTH_DEGREE){
 					turnLeft(delta);
 				}
 				break;
 			case WEST:
-				if(getAngle() > 180){
+				if(getAngle() > WorldSpatial.WEST_DEGREE){
 					turnRight(delta);
-				}else if(getAngle()<180){
+				}else if(getAngle()<WorldSpatial.WEST_DEGREE){
 					turnLeft(delta);
 				}
 				break;
