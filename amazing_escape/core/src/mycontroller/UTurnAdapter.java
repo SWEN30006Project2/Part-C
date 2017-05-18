@@ -33,7 +33,7 @@ public class UTurnAdapter implements TurningStrategyAdapter {
 						AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity);
 					}
 				}	
-		}else{//after finding the first wall, apply the follwoing to follow the wall
+		}else{//after finding the first wall, apply the following to follow the wall
 			if(!AI.isTurningLeft && !AI.isTurningRight){
 				//if is not following wall now and was following wall before 
 				//and not in the opposite direction of the direction the last time the car was following the wall, turn left
@@ -44,7 +44,7 @@ public class UTurnAdapter implements TurningStrategyAdapter {
 					AI.isTurningLeft = true;
 				}else{
 					if(AI.lastTurnDirection != null){
-						AI.readjust(AI.lastTurnDirection,delta);
+						AI.readjust(AI.getOrientation(),delta);
 					}
 					//if there is a wall ahead, turn right
 					if(AI.checkWallAhead(AI.getOrientation(),currentView,AI.wallSensitivity)){

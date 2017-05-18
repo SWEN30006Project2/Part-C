@@ -35,47 +35,10 @@ public class MyAIController extends CarController {
 	@Override
 	public void update(float delta) {
 		System.out.println("Current: "+getPosition());
+		System.out.println(getAngle());
+		System.out.println(getOrientation());
 		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.predictDetectingAdapter").detect(this, delta);
 		StrategyFactory.getInstance().getTurningStrategyAdapter(strategy).applyTurning(this,delta);
-		/*// Gets what the car can see
-		HashMap<Coordinate, MapTile> currentView = getView();
-		checkStateChange();
-		// If not turning
-		if(!isTurningLeft && !isTurningRight){
-			//if is not following wall now and was following wall before 
-			//and not in the opposite direction of the direction the last time the car was following the wall, turn left
-			if(!checkFollowingWall(getOrientation(),currentView) &&
-					 preFollowWallOpsiteDir != null && getOrientation() != preFollowWallOpsiteDir){
-			    lastTurnDirection = WorldSpatial.RelativeDirection.LEFT;
-				applyLeftTurn(getOrientation(),delta);
-				isTurningLeft = true;
-			}else{
-				if(lastTurnDirection != null){
-					readjust(lastTurnDirection,delta);
-				}
-				//if there is a wall ahead, turn right
-				if(checkWallAhead(getOrientation(),currentView)){
-					lastTurnDirection = WorldSpatial.RelativeDirection.RIGHT;
-					applyRightTurn(getOrientation(),delta);
-					isTurningRight = true;	
-				}else if(getVelocity() < CAR_SPEED){
-					applyForwardAcceleration();
-				}
-			}
-		}else{
-			if(isTurningRight){
-				applyRightTurn(getOrientation(),delta);
-			}
-			else if(isTurningLeft){
-				// Apply the left turn if you are not currently near a wall.
-				if(!checkFollowingWall(getOrientation(),currentView)){
-					applyLeftTurn(getOrientation(),delta);
-				}
-				else{
-					isTurningLeft = false;
-				}
-			}
-		}*/
 	}
 	
 	/**
@@ -83,78 +46,41 @@ public class MyAIController extends CarController {
 	 * @param lastTurnDirection
 	 * @param delta
 	 */
-	void readjust(WorldSpatial.RelativeDirection lastTurnDirection, float delta) {
-		if(lastTurnDirection != null){
-			if(!isTurningRight && lastTurnDirection.equals(WorldSpatial.RelativeDirection.RIGHT)){
-				adjustRight(getOrientation(),delta);
-			}
-			else if(!isTurningLeft && lastTurnDirection.equals(WorldSpatial.RelativeDirection.LEFT)){
-				adjustLeft(getOrientation(),delta);
+	void readjust(WorldSpatial.Direction orientation ,float delta) {
+		if(lastTurnDirection != null && !isTurningLeft && !isTurningRight){
+			switch(orientation){
+			case EAST:
+				if(getAngle() > 0 && getAngle()<90){
+					turnRight(delta);
+				}else if(getAngle() < 360 && getAngle()>270){
+					turnLeft(delta);
+				}
+				break;
+			case NORTH:
+				if(getAngle() > 90){
+					turnRight(delta);
+				}else if(getAngle()<90){
+					turnLeft(delta);
+				}
+				break;
+			case SOUTH:
+				if(getAngle()>270){
+					turnRight(delta);
+				}else if(getAngle()<270){
+					turnLeft(delta);
+				}
+				break;
+			case WEST:
+				if(getAngle() > 180){
+					turnRight(delta);
+				}else if(getAngle()<180){
+					turnLeft(delta);
+				}
+				break;
+			default:
+				break;
 			}
 		}
-	}
-	
-	/**
-	 * Try to orient myself to a degree that I was supposed to be at if I am
-	 * misaligned.
-	 */
-	void adjustLeft(WorldSpatial.Direction orientation, float delta) {
-		
-		switch(orientation){
-		case EAST:
-			if(getAngle() > WorldSpatial.EAST_DEGREE_MIN+EAST_THRESHOLD){
-				turnRight(delta);
-			}
-			break;
-		case NORTH:
-			if(getAngle() > WorldSpatial.NORTH_DEGREE){
-				turnRight(delta);
-			}
-			break;
-		case SOUTH:
-			if(getAngle() > WorldSpatial.SOUTH_DEGREE){
-				turnRight(delta);
-			}
-			break;
-		case WEST:
-			if(getAngle() > WorldSpatial.WEST_DEGREE){
-				turnRight(delta);
-			}
-			break;
-			
-		default:
-			break;
-		}
-		
-	}
-
-	void adjustRight(WorldSpatial.Direction orientation, float delta) {
-		switch(orientation){
-		case EAST:
-			if(getAngle() > WorldSpatial.SOUTH_DEGREE && getAngle() < WorldSpatial.EAST_DEGREE_MAX){
-				turnLeft(delta);
-			}
-			break;
-		case NORTH:
-			if(getAngle() < WorldSpatial.NORTH_DEGREE){
-				turnLeft(delta);
-			}
-			break;
-		case SOUTH:
-			if(getAngle() < WorldSpatial.SOUTH_DEGREE){
-				turnLeft(delta);
-			}
-			break;
-		case WEST:
-			if(getAngle() < WorldSpatial.WEST_DEGREE){
-				turnLeft(delta);
-			}
-			break;
-			
-		default:
-			break;
-		}
-		
 	}
 	
 	/**

@@ -12,7 +12,6 @@ public class predictDetectingAdapter implements DetectStrategyAdapter {
 		HashMap<Coordinate, MapTile> currentView = AI.getView();
 		WorldSpatial.Direction currentOrientation = AI.getOrientation();
 		Coordinate currentPosition = new Coordinate(AI.getPosition());
-		//System.out.println(AI.getAngle());
 		if(AI.checkWallAhead(currentOrientation, currentView, 3) && !AI.isTurningLeft && AI.isTurningRight){
 			switch(currentOrientation){
 			case NORTH:
