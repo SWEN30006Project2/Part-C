@@ -11,20 +11,22 @@ import world.WorldSpatial;
 public class MyAIController extends CarController {
 	
 	// How many minimum units the wall is away from the player.
-	private int wallSensitivity = 2;
-	private boolean isFollowingWall = false; // This is initialized when the car sticks to a wall.
-	private WorldSpatial.RelativeDirection lastTurnDirection = null; // Shows the last turn direction the car takes.
-	private boolean isTurningLeft = false;
-	private boolean isTurningRight = false; 
-	private WorldSpatial.Direction previousState = null; // Keeps track of the previous state
-	private WorldSpatial.Direction preFollowWallOpsiteDir = null;  //keep track of the opposite direction of the last 
-	                                                               //time the car was following the wall
+    int wallSensitivity = 2;
+    boolean isFollowingWall = false; // This is initialized when the car sticks to a wall.
+	WorldSpatial.RelativeDirection lastTurnDirection = null; // Shows the last turn direction the car takes.
+	boolean isTurningLeft = false;
+	boolean isTurningRight = false; 
+	WorldSpatial.Direction previousState = null; // Keeps track of the previous state
+	//keep track of the opposite direction of the last time the car was following the wall
+	WorldSpatial.Direction preFollowWallOpsiteDir = null;   
+	boolean strategyLock = false; 
+	String previousStrategy;                                                      
 	
 	// Car Speed to move at
-	private final float CAR_SPEED = 3;
+	final float CAR_SPEED = 3;
 	
 	// Offset used to differentiate between 0 and 360 degrees
-	private int EAST_THRESHOLD = 3;
+	int EAST_THRESHOLD = 3;
 	
 	public MyAIController(Car car) {
 		super(car);
@@ -32,7 +34,10 @@ public class MyAIController extends CarController {
 
 	@Override
 	public void update(float delta) {
-		// Gets what the car can see
+		System.out.println("Current: "+getPosition());
+		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.predictDetectingAdapter").detect(this, delta);
+		StrategyFactory.getInstance().getTurningStrategyAdapter(strategy).applyTurning(this,delta);
+		/*// Gets what the car can see
 		HashMap<Coordinate, MapTile> currentView = getView();
 		checkStateChange();
 		// If not turning
@@ -40,7 +45,7 @@ public class MyAIController extends CarController {
 			//if is not following wall now and was following wall before 
 			//and not in the opposite direction of the direction the last time the car was following the wall, turn left
 			if(!checkFollowingWall(getOrientation(),currentView) &&
-					 preFollowWallOpsiteDir != null && getOrientation()!=preFollowWallOpsiteDir){
+					 preFollowWallOpsiteDir != null && getOrientation() != preFollowWallOpsiteDir){
 			    lastTurnDirection = WorldSpatial.RelativeDirection.LEFT;
 				applyLeftTurn(getOrientation(),delta);
 				isTurningLeft = true;
@@ -55,7 +60,6 @@ public class MyAIController extends CarController {
 					isTurningRight = true;	
 				}else if(getVelocity() < CAR_SPEED){
 					applyForwardAcceleration();
-					//System.out.println(0);
 				}
 			}
 		}else{
@@ -71,7 +75,7 @@ public class MyAIController extends CarController {
 					isTurningLeft = false;
 				}
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -79,7 +83,7 @@ public class MyAIController extends CarController {
 	 * @param lastTurnDirection
 	 * @param delta
 	 */
-	private void readjust(WorldSpatial.RelativeDirection lastTurnDirection, float delta) {
+	void readjust(WorldSpatial.RelativeDirection lastTurnDirection, float delta) {
 		if(lastTurnDirection != null){
 			if(!isTurningRight && lastTurnDirection.equals(WorldSpatial.RelativeDirection.RIGHT)){
 				adjustRight(getOrientation(),delta);
@@ -94,7 +98,7 @@ public class MyAIController extends CarController {
 	 * Try to orient myself to a degree that I was supposed to be at if I am
 	 * misaligned.
 	 */
-	private void adjustLeft(WorldSpatial.Direction orientation, float delta) {
+	void adjustLeft(WorldSpatial.Direction orientation, float delta) {
 		
 		switch(orientation){
 		case EAST:
@@ -124,7 +128,7 @@ public class MyAIController extends CarController {
 		
 	}
 
-	private void adjustRight(WorldSpatial.Direction orientation, float delta) {
+	void adjustRight(WorldSpatial.Direction orientation, float delta) {
 		switch(orientation){
 		case EAST:
 			if(getAngle() > WorldSpatial.SOUTH_DEGREE && getAngle() < WorldSpatial.EAST_DEGREE_MAX){
@@ -157,7 +161,7 @@ public class MyAIController extends CarController {
 	 * Checks whether the car's state has changed or not, stops turning if it
 	 *  already has. is turning return true, otherwise return false 
 	 */
-	private void checkStateChange() {
+	 void checkStateChange() {
 		if(previousState == null){
 			previousState = getOrientation();
 		}
@@ -177,7 +181,7 @@ public class MyAIController extends CarController {
 	/**
 	 * Turn the car counter clock wise (think of a compass going counter clock-wise)
 	 */
-	private void applyLeftTurn(WorldSpatial.Direction orientation, float delta) {
+	void applyLeftTurn(WorldSpatial.Direction orientation, float delta) {
 		switch(orientation){
 		case EAST:
 			if(!getOrientation().equals(WorldSpatial.Direction.NORTH)){
@@ -209,7 +213,7 @@ public class MyAIController extends CarController {
 	/**
 	 * Turn the car clock wise (think of a compass going clock-wise)
 	 */
-	private void applyRightTurn(WorldSpatial.Direction orientation, float delta) {
+	void applyRightTurn(WorldSpatial.Direction orientation, float delta) {
 		switch(orientation){
 		case EAST:
 			if(!getOrientation().equals(WorldSpatial.Direction.SOUTH)){
@@ -244,16 +248,16 @@ public class MyAIController extends CarController {
 	 * @param currentView what the car can currently see
 	 * @return
 	 */
-	private boolean checkWallAhead(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView){
+	boolean checkWallAhead(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView,int distance){
 		switch(orientation){
 		case EAST:
-			return checkEast(currentView);
+			return checkEast(currentView,distance);
 		case NORTH:
-			return checkNorth(currentView);
+			return checkNorth(currentView,distance);
 		case SOUTH:
-			return checkSouth(currentView);
+			return checkSouth(currentView,distance);
 		case WEST:
-			return checkWest(currentView);
+			return checkWest(currentView,distance);
 		default:
 			return false;
 		
@@ -266,36 +270,36 @@ public class MyAIController extends CarController {
 	 * @param currentView
 	 * @return
 	 */
-	private boolean checkFollowingWall(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView) {
+	boolean checkFollowingWall(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView,int distance) {
 		
 		switch(orientation){
 		case EAST:
-			isFollowingWall = checkNorth(currentView);
+			isFollowingWall = checkNorth(currentView,distance);
 			if(isFollowingWall){
 				preFollowWallOpsiteDir = WorldSpatial.Direction.WEST;
 			}
-			System.out.println("checkNorth"+" "+isFollowingWall);
+			//System.out.println("checkNorth"+" "+isFollowingWall);
 			return isFollowingWall;
 		case NORTH:
-			isFollowingWall = checkWest(currentView);
+			isFollowingWall = checkWest(currentView,distance);
 			if(isFollowingWall){
 				preFollowWallOpsiteDir = WorldSpatial.Direction.SOUTH;
 			}
-			System.out.println("checkWest"+" "+isFollowingWall);
+			//System.out.println("checkWest"+" "+isFollowingWall);
 			return isFollowingWall;
 		case SOUTH:
-			isFollowingWall = checkEast(currentView);
+			isFollowingWall = checkEast(currentView,distance);
 			if(isFollowingWall){
 				preFollowWallOpsiteDir = WorldSpatial.Direction.NORTH;
 			}
-			System.out.println("checkEast"+" "+isFollowingWall);
+			//System.out.println("checkEast"+" "+isFollowingWall);
 			return isFollowingWall;
 		case WEST:
-			isFollowingWall = checkSouth(currentView);
+			isFollowingWall = checkSouth(currentView,distance);
 			if(isFollowingWall){
 				preFollowWallOpsiteDir = WorldSpatial.Direction.EAST;
 			}
-			System.out.println("checkSouth"+" "+isFollowingWall);
+			//System.out.println("checkSouth"+" "+isFollowingWall);
 			return isFollowingWall;
 		default:
 			isFollowingWall = false;
@@ -313,10 +317,10 @@ public class MyAIController extends CarController {
 	 * checkNorth will check up to wallSensitivity amount of tiles to the top.
 	 * checkSouth will check up to wallSensitivity amount of tiles below.
 	 */
-	public boolean checkEast(HashMap<Coordinate, MapTile> currentView){
+	boolean checkEast(HashMap<Coordinate, MapTile> currentView,int distance){
 		// Check tiles to my right
 		Coordinate currentPosition = new Coordinate(getPosition());
-		for(int i = 0; i <= wallSensitivity; i++){
+		for(int i = 0; i <= distance; i++){
 			MapTile tile = currentView.get(new Coordinate(currentPosition.x+i, currentPosition.y));
 			if(tile.getName().equals("Wall")){
 				return true;
@@ -325,10 +329,10 @@ public class MyAIController extends CarController {
 		return false;
 	}
 	
-	public boolean checkWest(HashMap<Coordinate,MapTile> currentView){
+	boolean checkWest(HashMap<Coordinate,MapTile> currentView,int distance){
 		// Check tiles to my left
 		Coordinate currentPosition = new Coordinate(getPosition());
-		for(int i = 0; i <= wallSensitivity; i++){
+		for(int i = 0; i <= distance; i++){
 			MapTile tile = currentView.get(new Coordinate(currentPosition.x-i, currentPosition.y));
 			if(tile.getName().equals("Wall")){
 				return true;
@@ -337,10 +341,10 @@ public class MyAIController extends CarController {
 		return false;
 	}
 	
-	public boolean checkNorth(HashMap<Coordinate,MapTile> currentView){
+	boolean checkNorth(HashMap<Coordinate,MapTile> currentView,int distance){
 		// Check tiles to towards the top
 		Coordinate currentPosition = new Coordinate(getPosition());
-		for(int i = 0; i <= wallSensitivity; i++){
+		for(int i = 0; i <= distance; i++){
 			MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y+i));
 			if(tile.getName().equals("Wall")){
 				return true;
@@ -349,10 +353,10 @@ public class MyAIController extends CarController {
 		return false;
 	}
 	
-	public boolean checkSouth(HashMap<Coordinate,MapTile> currentView){
+	boolean checkSouth(HashMap<Coordinate,MapTile> currentView,int distance){
 		// Check tiles towards the bottom
 		Coordinate currentPosition = new Coordinate(getPosition());
-		for(int i = 0; i <= wallSensitivity; i++){
+		for(int i = 0; i <= distance; i++){
 			MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y-i));
 			if(tile.getName().equals("Wall")){
 				return true;
@@ -360,8 +364,4 @@ public class MyAIController extends CarController {
 		}
 		return false;
 	}
-	
-	
-	
-
 }

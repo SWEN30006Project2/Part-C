@@ -1,7 +1,6 @@
 package controller;
 
 import java.util.HashMap;
-
 import tiles.MapTile;
 import utilities.Coordinate;
 import world.Car;
@@ -23,7 +22,7 @@ public class AIController extends CarController {
 	private final float CAR_SPEED = 3;
 	
 	// Offset used to differentiate between 0 and 360 degrees
-	private int EAST_THRESHOLD = 3;
+	private int EAST_THRESHOLD = 5;
 	
 	public AIController(Car car) {
 		super(car);
@@ -35,9 +34,7 @@ public class AIController extends CarController {
 		// Gets what the car can see
 		HashMap<Coordinate, MapTile> currentView = getView();
 		
-		
 		checkStateChange();
-
 
 		// If you are not following a wall initially, find a wall to stick to!
 		if(!isFollowingWall){
@@ -62,7 +59,6 @@ public class AIController extends CarController {
 		}
 		// Once the car is already stuck to a wall, apply the following logic
 		else{
-			
 			// Readjust the car if it is misaligned.
 			readjust(lastTurnDirection,delta);
 			
@@ -98,9 +94,6 @@ public class AIController extends CarController {
 				isTurningLeft = true;
 			}
 		}
-		
-
-
 	}
 	
 	/**
