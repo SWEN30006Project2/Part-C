@@ -11,7 +11,6 @@ public class predictDetectingAdapter implements DetectStrategyAdapter {
 	public String detect(MyAIController AI, float delta){
 		HashMap<Coordinate, MapTile> currentView = AI.getView();
 		WorldSpatial.Direction currentOrientation = AI.getOrientation();
-		Coordinate currentPosition = new Coordinate(AI.getPosition());
 		if(AI.checkWallAhead(currentOrientation, currentView, AI.wallSensitivity) && !AI.isTurningLeft && !AI.isTurningRight){
 			switch(currentOrientation){
 			case NORTH:
@@ -19,9 +18,9 @@ public class predictDetectingAdapter implements DetectStrategyAdapter {
 				if(!AI.checkWest(currentView,AI.wallSensitivity)){
 					return "mycontroller.UTurnAdapter";
 				}else{
-					if(AI.peek(AI.getRawVelocity(),270,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+					if(AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.UTurnAdapter";
-					}else if(AI.peek(AI.getRawVelocity(),360,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+					}else if(AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.ThreePointTurnAdapter";
 					}else
 						return "mycontroller.ReverseAdapter";
@@ -31,9 +30,9 @@ public class predictDetectingAdapter implements DetectStrategyAdapter {
 				if(!AI.checkSouth(currentView,AI.wallSensitivity)){
 					return "mycontroller.UTurnAdapter";
 				}else{
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-180,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());	
-					if(AI.peek(AI.getRawVelocity(),0,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-360,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-360,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());	
+					if(AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.UTurnAdapter";
 					}else if(AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.ThreePointTurnAdapter";
@@ -46,26 +45,26 @@ public class predictDetectingAdapter implements DetectStrategyAdapter {
 					System.out.println(0);
 					return "mycontroller.UTurnAdapter";
 				}else{
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());
-					System.out.println(AI.getRawVelocity());
-					if(AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-270,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-270,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());
+//					System.out.println(AI.getRawVelocity());
+					if(AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.UTurnAdapter";
-					}else if(AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+					}else if(AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.ThreePointTurnAdapter";
 					}else
 						return "mycontroller.ReverseAdapter";
 				}
 			case EAST:
-				System.out.println("EAST");
+//				System.out.println("EAST");
 				if(!AI.checkNorth(currentView,AI.wallSensitivity)){
 					return "mycontroller.UTurnAdapter";
 				}else{
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
-					System.out.println("future: "+AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());					
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-180,WorldSpatial.RelativeDirection.RIGHT,delta).getCoordinate());
+//					System.out.println("future: "+AI.peek(AI.getRawVelocity(),-180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable());					
 					if(AI.peek(AI.getRawVelocity(),180,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.UTurnAdapter";
-					}else if(AI.peek(AI.getRawVelocity(),270,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
+					}else if(AI.peek(AI.getRawVelocity(),90,WorldSpatial.RelativeDirection.RIGHT,delta).getReachable()){
 						return "mycontroller.ThreePointTurnAdapter";
 					}else
 						return "mycontroller.ReverseAdapter";
