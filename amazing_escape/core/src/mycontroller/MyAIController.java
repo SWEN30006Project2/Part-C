@@ -35,10 +35,10 @@ public class MyAIController extends CarController {
 
 	@Override
 	public void update(float delta) {
-		System.out.println("Current: "+getPosition());
-		System.out.println(getAngle());
+		System.out.println("Current position: "+getPosition());
+		System.out.println("Current speed: "+getVelocity());
 		//System.out.println(getOrientation());
-		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.predictDetectingAdapter").detect(this, delta);
+		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.MyDetectingAdapter").detect(this, delta);
 		try{
 			StrategyFactory.getInstance().getAvoidingStrategyAdapter(strategy).avoid(this, delta);;
 		}catch(Exception e){
