@@ -13,9 +13,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 		HashMap<Coordinate, MapTile> currentView = AI.getView();
 		WorldSpatial.Direction currentOrientation = AI.getOrientation();
 		Coordinate currentPosition = new Coordinate(AI.getPosition());
-		//if the car is not following and no traps ahead, use U turn
-		//if the car is following wall and no traps but a wall ahead, using the 
-		//following logic to decide to adapt which turning strategy 
+
 		if(AI.checkWallAhead(currentOrientation, currentView, AI.getViewSquare()) && !AI.isTurningLeft && !AI.isTurningRight){
 			switch(currentOrientation){
 			case EAST:
