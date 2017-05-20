@@ -55,7 +55,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 					return "mycontroller.UTurnAdapter";
 				}
 				
-				if(currentView.get(new Coordinate(currentPosition.x-1, currentPosition.y+2)).getName().equals("Wall")
+				if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y+2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y)).getName().equals("Wall")){
 					return "mycontroller.ReverseAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y+1)).getName().equals("Wall")&&
@@ -71,7 +71,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 					return "mycontroller.UTurnAdapter";
 				}
 				
-				if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y-1)).getName().equals("Wall")
+				if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y-2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x, currentPosition.y-2)).getName().equals("Wall")){
 					return "mycontroller.ReverseAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x-1, currentPosition.y-2)).getName().equals("Wall")&&
