@@ -13,9 +13,9 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 		HashMap<Coordinate, MapTile> currentView = AI.getView();
 		WorldSpatial.Direction currentOrientation = AI.getOrientation();
 		Coordinate currentPosition = new Coordinate(AI.getPosition());
-
 		if(AI.checkWallAhead(currentOrientation, currentView, AI.getViewSquare()) && !AI.isTurningLeft && !AI.isTurningRight){
-			switch(currentOrientation){
+			System.out.println("detecting");
+			switch(currentOrientation){	 
 			case EAST:
 				if(!AI.checkNorth(currentView,AI.wallSensitivity)
 				   ||(!currentView.get(new Coordinate(currentPosition.x+1, currentPosition.y+1)).getName().equals("Wall")
@@ -25,7 +25,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 				
 				if(currentView.get(new Coordinate(currentPosition.x+2, currentPosition.y-2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x+2, currentPosition.y)).getName().equals("Wall")){
-					return "mycontroller.ReverseAdapter";
+					return "mycontroller.ReverseOutAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x+2, currentPosition.y-1)).getName().equals("Wall")&&
 						currentView.get(new Coordinate(currentPosition.x, currentPosition.y-3)).getName().equals("Wall")){
 					return "mycontroller.ThreePointTurnAdapter";
@@ -41,7 +41,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 				
 				if(currentView.get(new Coordinate(currentPosition.x+2, currentPosition.y+2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x, currentPosition.y+2)).getName().equals("Wall")){
-					return "mycontroller.ReverseAdapter";
+					return "mycontroller.ReverseOutAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x+1, currentPosition.y+2)).getName().equals("Wall")&&
 						currentView.get(new Coordinate(currentPosition.x+3, currentPosition.y)).getName().equals("Wall")){
 					return "mycontroller.ThreePointTurnAdapter";
@@ -57,7 +57,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 				
 				if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y+2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y)).getName().equals("Wall")){
-					return "mycontroller.ReverseAdapter";
+					return "mycontroller.ReverseOutAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y+1)).getName().equals("Wall")&&
 						currentView.get(new Coordinate(currentPosition.x, currentPosition.y+3)).getName().equals("Wall")){
 					return "mycontroller.ThreePointTurnAdapter";
@@ -73,7 +73,7 @@ public class ThreeDistanceDetectorAdapter implements DetectStrategyAdapter {
 				
 				if(currentView.get(new Coordinate(currentPosition.x-2, currentPosition.y-2)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x, currentPosition.y-2)).getName().equals("Wall")){
-					return "mycontroller.ReverseAdapter";
+					return "mycontroller.ReverseOutAdapter";
 				}else if(currentView.get(new Coordinate(currentPosition.x-1, currentPosition.y-2)).getName().equals("Wall")&&
 						currentView.get(new Coordinate(currentPosition.x-3, currentPosition.y)).getName().equals("Wall")){
 					return "mycontroller.ThreePointTurnAdapter";

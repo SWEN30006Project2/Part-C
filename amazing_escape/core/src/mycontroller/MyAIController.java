@@ -21,7 +21,7 @@ public class MyAIController extends CarController {
 	WorldSpatial.Direction preFollowWallOpsiteDir = null;   
 	boolean strategyLock = false; 
 	TurningStrategyAdapter turningStrategy; 
-	                                                      
+	HashMap<Coordinate,MapTile> myMap;                                                  
 	 
 	// Car Speed to move at
 	final float CAR_SPEED = 3;
@@ -31,16 +31,19 @@ public class MyAIController extends CarController {
 	
 	public MyAIController(Car car) {
 		super(car);
+		HashMap<Coordinate,MapTile> myMap = new HashMap<Coordinate,MapTile>();
 	}
 
 	@Override
 	public void update(float delta) {
-		System.out.println("Current position: "+getPosition());
-		System.out.println("Current speed: "+getVelocity());
-		//System.out.println(getOrientation());
-		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.MyDetectingAdapter").detect(this, delta);
+//		System.out.println("Current position: "+getPosition());
+//		System.out.println("Current speed: "+getVelocity());
+//		System.out.println(getAngle());
+		myMap.putAll(getView());
+		//if(!strategyLock)
+		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorAdapter").detect(this, delta);
 		try{
-			StrategyFactory.getInstance().getAvoidingStrategyAdapter(strategy).avoid(this, delta);;
+			StrategyFactory.getInstance().getAvoidingStrategyAdapter(strategy).avoid(this, delta);
 		}catch(Exception e){
 			if(!strategyLock){
 				turningStrategy = StrategyFactory.getInstance().getTurningStrategyAdapter(strategy);
