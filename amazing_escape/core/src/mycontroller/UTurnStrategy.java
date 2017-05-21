@@ -6,7 +6,7 @@ import tiles.MapTile;
 import utilities.Coordinate;
 import world.WorldSpatial;
 
-public class UTurnAdapter implements TurningStrategyAdapter {
+public class UTurnStrategy implements TurningStrategyAdapter {
 
 	@Override
 	public void applyTurning(MyAIController AI,float delta) {

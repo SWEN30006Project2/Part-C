@@ -1,6 +1,6 @@
 package mycontroller;
 
-public class ReverseOutAdapter implements TurningStrategyAdapter {
+public class ReverseOutStrategy implements TurningStrategyAdapter {
 	@Override
 	public void applyTurning(MyAIController AI, float delta) {
 		      

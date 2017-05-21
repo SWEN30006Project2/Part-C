@@ -30,7 +30,7 @@ public class StrategyFactory {
 	}
 	
 	public DetectStrategyAdapter getDetectStrategyAdapter(String className){
-		//if(detectStrategyAdapter == null)
+		if(detectStrategyAdapter == null)
 			try {
 				detectStrategyAdapter = (DetectStrategyAdapter) Class.forName(className).newInstance();
 			} catch (InstantiationException e) {
@@ -60,6 +60,7 @@ public class StrategyFactory {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		return avoidingStrategyAdapter;
 	}
 }

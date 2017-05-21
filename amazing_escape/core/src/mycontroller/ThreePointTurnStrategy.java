@@ -2,28 +2,26 @@ package mycontroller;
 
 import java.util.HashMap;
 
-import com.sun.corba.se.spi.ior.iiop.IIOPFactories;
-import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm.WordListener;
 
 import tiles.MapTile;
 import utilities.Coordinate;
 import world.Car;
 import world.WorldSpatial;
 
-public class ThreePointTurnAdapter implements TurningStrategyAdapter{
+public class ThreePointTurnStrategy implements TurningStrategyAdapter{
 	
-	public static WorldSpatial.Direction target;
-	final static float threePointTurnSpeedLimit = (float) 1.15;
+	private static WorldSpatial.Direction targetOrientation;
+	private final static float SPEED_LIMIT = (float) 1.15;
 	
 	@Override
 	public void applyTurning(MyAIController AI, float delta) {
 		if(!AI.strategyLock){
-			target = null;
+			targetOrientation = null;
 		}
 		AI.checkStateChange();
 		HashMap<Coordinate, MapTile> currentView = AI.getView();
 		
-		if(!AI.isTurningLeft && !AI.isTurningRight && target ==null){
+		if(!AI.isTurningLeft && !AI.isTurningRight && targetOrientation ==null){
 			
 			if(!AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity) &&
 					AI.preFollowWallOpsiteDir != null && AI.getOrientation() != AI.preFollowWallOpsiteDir){
@@ -41,7 +39,7 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 					AI.lastTurnDirection = WorldSpatial.RelativeDirection.RIGHT;
 					AI.applyLeftTurn(AI.getOrientation(),delta);
 					AI.isTurningRight = true;	
-					target = targetOrientation(AI.getOrientation());
+					targetOrientation = getTargetOrientation(AI.getOrientation());
 					AI.strategyLock = true;
 			}
 			
@@ -49,12 +47,11 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 			
 			
 			
-			if(AI.isTurningRight && !AI.getOrientation().equals(target)&&!AI.isTurningLeft){
+			if(AI.isTurningRight && !AI.getOrientation().equals(targetOrientation)&&!AI.isTurningLeft){
 				AI.applyReverseAcceleration();
 				AI.applyLeftTurn(AI.getOrientation(), delta);
 				
-				//AI.applyForwardAcceleration();
-				//AI.applyRightTurn(AI.getOrientation(), delta);
+
 				
 			}else if (AI.isTurningLeft) {
 				if(!AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity)){
@@ -64,18 +61,18 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 					AI.isTurningLeft = false;
 				}
 			}
-			else if(AI.getOrientation().equals(target)){
-				float tenpV = AI.getVelocity(); 
+			else if(AI.getOrientation().equals(targetOrientation)){
+				System.out.println(AI.strategyLock);
 				switch (AI.getOrientation()) {
 				case EAST:
 					if(AI.checkWest(currentView, 1)){
 						AI.applyForwardAcceleration();
 						AI.strategyLock = false;
-						target = null;
+						targetOrientation = null;
 						AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity);
 					}else{
 						AI.applyReverseAcceleration();
-						if(AI.getVelocity()>threePointTurnSpeedLimit){
+						if(AI.getVelocity()>SPEED_LIMIT){
 							AI.applyForwardAcceleration();
 						}
 					}
@@ -84,12 +81,12 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 					if(AI.checkSouth(currentView, 1)){
 						AI.applyForwardAcceleration();
 						AI.strategyLock = false;
-						target = null;
+						targetOrientation = null;
 						AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity);
 					}else{
 						
 						AI.applyReverseAcceleration();
-						if(AI.getVelocity()>threePointTurnSpeedLimit){
+						if(AI.getVelocity()>SPEED_LIMIT){
 							AI.applyForwardAcceleration();
 						}
 						
@@ -101,11 +98,11 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 					if(AI.checkNorth(currentView, 1)){
 						AI.applyForwardAcceleration();
 						AI.strategyLock = false;
-						target = null;
+						targetOrientation = null;
 						AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity);
 					}else{
 						AI.applyReverseAcceleration();
-						if(AI.getVelocity()>threePointTurnSpeedLimit){
+						if(AI.getVelocity()>SPEED_LIMIT){
 							AI.applyForwardAcceleration();
 						}
 						
@@ -116,11 +113,11 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 					if(AI.checkEast(currentView, 1)){
 						AI.applyForwardAcceleration();
 						AI.strategyLock = false;
-						target = null;
+						targetOrientation = null;
 						AI.checkFollowingWall(AI.getOrientation(),currentView,AI.wallSensitivity);
 					}else{
 						AI.applyReverseAcceleration();
-						if(AI.getVelocity()>threePointTurnSpeedLimit){
+						if(AI.getVelocity()>SPEED_LIMIT){
 							AI.applyForwardAcceleration();
 						}
 					}
@@ -134,7 +131,7 @@ public class ThreePointTurnAdapter implements TurningStrategyAdapter{
 	
 	
 	
-	public WorldSpatial.Direction targetOrientation(WorldSpatial.Direction currentOrientation){
+	public WorldSpatial.Direction getTargetOrientation(WorldSpatial.Direction currentOrientation){
 		WorldSpatial.Direction target =null;
 			switch (currentOrientation) {
 			case NORTH:

@@ -21,7 +21,7 @@ public class MyAIController extends CarController {
 	WorldSpatial.Direction preFollowWallOpsiteDir = null;   
 	boolean strategyLock = false; 
 	TurningStrategyAdapter turningStrategy; 
-	                                                      
+	HashMap<Coordinate,MapTile> myMap;                                                  
 	 
 	// Car Speed to move at
 	final float CAR_SPEED = 3;
@@ -31,19 +31,26 @@ public class MyAIController extends CarController {
 	
 	public MyAIController(Car car) {
 		super(car);
+		HashMap<Coordinate,MapTile> myMap = new HashMap<Coordinate,MapTile>();
 	}
 
 	@Override
 	public void update(float delta) {
-		System.out.println("Current position: "+getPosition());
-		System.out.println("Current speed: "+getVelocity());
-		//System.out.println(getOrientation());
-		String strategy = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.MyDetectingAdapter").detect(this, delta);
+//		System.out.println("Current position: "+getPosition());
+//		System.out.println("Current speed: "+getVelocity());
+//		System.out.println(getAngle());
+//		myMap.putAll(getView());
+		//if(!strategyLock)
+		String adapter = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorStrategy").detect(this, delta);
 		try{
-			StrategyFactory.getInstance().getAvoidingStrategyAdapter(strategy).avoid(this, delta);;
+			if(!strategyLock){
+				StrategyFactory.getInstance().getAvoidingStrategyAdapter(adapter).avoid(this, delta);
+			}else{
+				
+			}    
 		}catch(Exception e){
 			if(!strategyLock){
-				turningStrategy = StrategyFactory.getInstance().getTurningStrategyAdapter(strategy);
+				turningStrategy = StrategyFactory.getInstance().getTurningStrategyAdapter(adapter);
 				turningStrategy.applyTurning(this, delta);
 			}else{
 				turningStrategy.applyTurning(this, delta);
@@ -194,6 +201,47 @@ public class MyAIController extends CarController {
 			return checkSouth(currentView,distance);
 		case WEST:
 			return checkWest(currentView,distance);
+		default:
+			return false;
+		
+		}
+	}
+	
+	boolean checkTrapAhead(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView,int distance){
+		Coordinate currentPosition = new Coordinate(getPosition());
+		switch(orientation){
+		case EAST:
+			for(int i = 1; i <= distance; i++){
+				MapTile tile = currentView.get(new Coordinate(currentPosition.x+i, currentPosition.y));
+				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+					return true;
+				}
+			}
+			return false;
+		case NORTH:
+			for(int i = 1; i <= distance; i++){
+				MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y+i));
+				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+					return true;
+				}
+			}
+			return false;
+		case SOUTH:
+			for(int i = 1; i <= distance; i++){
+				MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y-i));
+				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+					return true;
+				}
+			}
+			return false;
+		case WEST:
+			for(int i = 1; i <= distance; i++){
+				MapTile tile = currentView.get(new Coordinate(currentPosition.x-i, currentPosition.y));
+				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+					return true;
+				}
+			}
+			return false;
 		default:
 			return false;
 		
