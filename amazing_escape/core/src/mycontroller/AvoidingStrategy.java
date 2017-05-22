@@ -1,5 +1,5 @@
 package mycontroller;
 
-public interface AvoidingStrategyAdapter {
+public interface AvoidingStrategy {
 	public void avoid(MyAIController AI,float delta);
 }

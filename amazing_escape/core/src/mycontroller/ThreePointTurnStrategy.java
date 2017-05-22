@@ -8,7 +8,7 @@ import utilities.Coordinate;
 import world.Car;
 import world.WorldSpatial;
 
-public class ThreePointTurnStrategy implements TurningStrategyAdapter{
+public class ThreePointTurnStrategy implements TurningStrategy{
 	
 	private static WorldSpatial.Direction targetOrientation;
 	private final static float SPEED_LIMIT = (float) 1.15;

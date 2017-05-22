@@ -2,9 +2,9 @@ package mycontroller;
 
 public class StrategyFactory {
 	private static StrategyFactory instance;
-	TurningStrategyAdapter turningStrategyAdapter;
-	DetectStrategyAdapter detectStrategyAdapter;
-	AvoidingStrategyAdapter avoidingStrategyAdapter;
+	TurningStrategy turningStrategy;
+	DetectStrategy detectStrategy;
+	AvoidingStrategy avoidingStrategy;
 	
 	public static StrategyFactory getInstance(){
 		if(instance == null)
@@ -12,10 +12,10 @@ public class StrategyFactory {
 		return instance;
 	}
 	
-	public TurningStrategyAdapter getTurningStrategyAdapter(String className){
+	public TurningStrategy getTurningStrategy(String className){
 		//if(turningStrategyAdapter == null)
 			try {
-				turningStrategyAdapter = (TurningStrategyAdapter) Class.forName(className).newInstance();
+				turningStrategy = (TurningStrategy) Class.forName(className).newInstance();
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -26,13 +26,13 @@ public class StrategyFactory {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		return turningStrategyAdapter;
+		return turningStrategy;
 	}
 	
-	public DetectStrategyAdapter getDetectStrategyAdapter(String className){
-		if(detectStrategyAdapter == null)
+	public DetectStrategy getDetectStrategy(String className){
+		if(detectStrategy == null)
 			try {
-				detectStrategyAdapter = (DetectStrategyAdapter) Class.forName(className).newInstance();
+				detectStrategy = (DetectStrategy) Class.forName(className).newInstance();
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -43,13 +43,13 @@ public class StrategyFactory {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		return detectStrategyAdapter;
+		return detectStrategy;
 	}
 	
-	public AvoidingStrategyAdapter getAvoidingStrategyAdapter(String className){
+	public AvoidingStrategy getAvoidingStrategy(String className){
 		//if(detectStrategyAdapter == null)
 			try {
-				avoidingStrategyAdapter = (AvoidingStrategyAdapter) Class.forName(className).newInstance();
+				avoidingStrategy = (AvoidingStrategy) Class.forName(className).newInstance();
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -61,6 +61,6 @@ public class StrategyFactory {
 				e.printStackTrace();
 			}
 			
-		return avoidingStrategyAdapter;
+		return avoidingStrategy;
 	}
 }

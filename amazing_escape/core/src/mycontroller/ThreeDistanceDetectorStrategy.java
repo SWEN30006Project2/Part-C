@@ -6,7 +6,7 @@ import tiles.MapTile;
 import utilities.Coordinate;
 import world.WorldSpatial;
 
-public class ThreeDistanceDetectorStrategy implements DetectStrategyAdapter {
+public class ThreeDistanceDetectorStrategy implements DetectStrategy {
 
 	@Override
 	public String detect(MyAIController AI,float delta){

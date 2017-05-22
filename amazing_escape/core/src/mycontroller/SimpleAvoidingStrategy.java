@@ -10,7 +10,7 @@ import tiles.MudTrap;
 import utilities.Coordinate;
 import world.WorldSpatial;
 
-public class SimpleAvoidingStrategy implements AvoidingStrategyAdapter {
+public class SimpleAvoidingStrategy implements AvoidingStrategy {
 	
 	private static final int ONE_UNIT = 1;
 	
