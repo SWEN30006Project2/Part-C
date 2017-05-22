@@ -3,6 +3,8 @@ package mycontroller;
 import java.util.HashMap;
 
 import controller.CarController;
+import tiles.GrassTrap;
+import tiles.LavaTrap;
 import tiles.MapTile;
 import utilities.Coordinate;
 import world.Car;
@@ -20,8 +22,8 @@ public class MyAIController extends CarController {
 	//keep track of the opposite direction of the last time the car was following the wall
 	WorldSpatial.Direction preFollowWallOpsiteDir = null;   
 	boolean strategyLock = false; 
-	TurningStrategyAdapter turningStrategy; 
-	HashMap<Coordinate,MapTile> myMap;                                                  
+	TurningStrategyAdapter turningStrategy;
+	AvoidingStrategyAdapter avoidingStrategy;                                                  
 	 
 	// Car Speed to move at
 	final float CAR_SPEED = 3;
@@ -39,14 +41,13 @@ public class MyAIController extends CarController {
 //		System.out.println("Current position: "+getPosition());
 //		System.out.println("Current speed: "+getVelocity());
 //		System.out.println(getAngle());
-//		myMap.putAll(getView());
-		//if(!strategyLock)
 		String adapter = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorStrategy").detect(this, delta);
 		try{
 			if(!strategyLock){
-				StrategyFactory.getInstance().getAvoidingStrategyAdapter(adapter).avoid(this, delta);
+			    avoidingStrategy = StrategyFactory.getInstance().getAvoidingStrategyAdapter(adapter);
+			    avoidingStrategy.avoid(this, delta);
 			}else{
-				
+				avoidingStrategy.avoid(this, delta);
 			}    
 		}catch(Exception e){
 			if(!strategyLock){
@@ -207,37 +208,48 @@ public class MyAIController extends CarController {
 		}
 	}
 	
-	boolean checkTrapAhead(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView,int distance){
+	/**
+	 * check whether there is a trap in the second unit ahead and there is no wall between the car and the trap
+	 * @param orientation the current orientation of the car
+	 * @param currentView the current view of the car
+	 * @param distance the distance you want to check
+	 * @return if there is a lava in the second unit, return true, otherwise return false
+	 */
+	boolean checkLavaAhead(WorldSpatial.Direction orientation, HashMap<Coordinate, MapTile> currentView,int distance){
 		Coordinate currentPosition = new Coordinate(getPosition());
 		switch(orientation){
 		case EAST:
-			for(int i = 1; i <= distance; i++){
+			for(int i = 2; i <= distance; i++){
 				MapTile tile = currentView.get(new Coordinate(currentPosition.x+i, currentPosition.y));
-				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+				if(tile instanceof LavaTrap &&
+				   !currentView.get(new Coordinate(currentPosition.x-1, currentPosition.y)).getName().equals("Wall")){
 					return true;
 				}
 			}
 			return false;
 		case NORTH:
-			for(int i = 1; i <= distance; i++){
+			for(int i = 2; i <= distance; i++){
 				MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y+i));
-				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+				if(tile instanceof LavaTrap
+					&& !currentView.get(new Coordinate(currentPosition.x, currentPosition.y+1)).getName().equals("Wall")){
 					return true;
 				}
 			}
 			return false;
 		case SOUTH:
-			for(int i = 1; i <= distance; i++){
+			for(int i = 2; i <= distance; i++){
 				MapTile tile = currentView.get(new Coordinate(currentPosition.x, currentPosition.y-i));
-				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+				if(tile instanceof LavaTrap &&
+				   !currentView.get(new Coordinate(currentPosition.x, currentPosition.y-1)).getName().equals("Wall")){
 					return true;
 				}
 			}
 			return false;
 		case WEST:
-			for(int i = 1; i <= distance; i++){
+			for(int i = 2; i <= distance; i++){
 				MapTile tile = currentView.get(new Coordinate(currentPosition.x-i, currentPosition.y));
-				if(tile.getClass().getSuperclass().getName().equals("TrapTile")){
+				if(tile instanceof LavaTrap &&
+				   !currentView.get(new Coordinate(currentPosition.x-1, currentPosition.y)).getName().equals("Wall")){
 					return true;
 				}
 			}

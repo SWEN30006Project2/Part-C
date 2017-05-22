@@ -14,9 +14,9 @@ public class ThreeDistanceDetectorStrategy implements DetectStrategyAdapter {
 		WorldSpatial.Direction currentOrientation = AI.getOrientation();
 		Coordinate currentPosition = new Coordinate(AI.getPosition());
 		String strategy;
-		if(AI.checkTrapAhead(currentOrientation, currentView, AI.wallSensitivity)){
-			return "mycontroller.SimpleAvoidingAdapter";
-		}
+//		if(AI.checkTrapAhead(currentOrientation, currentView, AI.wallSensitivity) && !AI.checkWallAhead(currentOrientation, currentView, 1)){
+//			return "mycontroller.SimpleAvoidingAdapter";
+//		}
 		if(AI.checkWallAhead(currentOrientation, currentView, AI.getViewSquare()) && !AI.isTurningLeft && !AI.isTurningRight){
 			System.out.println("detecting");
 			switch(currentOrientation){	 
@@ -24,7 +24,7 @@ public class ThreeDistanceDetectorStrategy implements DetectStrategyAdapter {
 				if(!AI.checkNorth(currentView,AI.wallSensitivity)
 				   ||(!currentView.get(new Coordinate(currentPosition.x+1, currentPosition.y+1)).getName().equals("Wall")
 					&& !currentView.get(new Coordinate(currentPosition.x+1, currentPosition.y+2)).getName().equals("Wall"))){
-					strategy = "mycontroller.UTurnStrategy";
+						strategy = "mycontroller.UTurnStrategy";
 				}
 				
 				if(currentView.get(new Coordinate(currentPosition.x+2, currentPosition.y-2)).getName().equals("Wall")
@@ -94,6 +94,10 @@ public class ThreeDistanceDetectorStrategy implements DetectStrategyAdapter {
 			}
 		}else{
 			strategy = "mycontroller.UTurnStrategy";
+		}
+		
+		if(strategy == "mycontroller.UTurnStrategy" && AI.checkLavaAhead(currentOrientation,currentView,AI.wallSensitivity)){
+			strategy = "mycontroller.SimpleAvoidingStrategy";
 		}
 		
 		return strategy;
