@@ -41,7 +41,8 @@ public class MyAIController extends CarController {
 //		System.out.println("Current position: "+getPosition());
 //		System.out.println("Current speed: "+getVelocity());
 //		System.out.println(getAngle());
-		String adapter = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorStrategy").detect(this, delta);
+		DetectStrategyAdapter detector = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorStrategy");
+		String adapter = detector.detect(this, delta);
 		try{
 			if(!strategyLock){
 			    avoidingStrategy = StrategyFactory.getInstance().getAvoidingStrategyAdapter(adapter);
