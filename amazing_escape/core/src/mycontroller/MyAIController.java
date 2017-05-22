@@ -44,19 +44,13 @@ public class MyAIController extends CarController {
 		DetectStrategyAdapter detector = StrategyFactory.getInstance().getDetectStrategyAdapter("mycontroller.ThreeDistanceDetectorStrategy");
 		String adapter = detector.detect(this, delta);
 		try{
-			if(!strategyLock){
+			if(!strategyLock)
 			    avoidingStrategy = StrategyFactory.getInstance().getAvoidingStrategyAdapter(adapter);
-			    avoidingStrategy.avoid(this, delta);
-			}else{
-				avoidingStrategy.avoid(this, delta);
-			}    
+			avoidingStrategy.avoid(this, delta);   
 		}catch(Exception e){
-			if(!strategyLock){
+			if(!strategyLock)
 				turningStrategy = StrategyFactory.getInstance().getTurningStrategyAdapter(adapter);
-				turningStrategy.applyTurning(this, delta);
-			}else{
-				turningStrategy.applyTurning(this, delta);
-			}
+			turningStrategy.applyTurning(this, delta);
 		}
 	}
 	
