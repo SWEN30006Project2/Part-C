@@ -9,7 +9,7 @@ import world.Car;
 import world.WorldSpatial;
 
 public class ThreePointTurnStrategy implements TurningStrategy{
-	
+	//test
 	private static WorldSpatial.Direction targetOrientation;
 	private final static float SPEED_LIMIT = (float) 1.15;
 	
